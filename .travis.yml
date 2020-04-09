@@ -20,6 +20,7 @@ matrix:
       env:
       - 'PYTHON_LIBS="-L$(python-config --prefix)/lib $(python-config --libs)"'
       - PY_ENABLE_SHARD=0
+      - COVERAGE=1
 
 
     - os: osx
@@ -59,6 +60,10 @@ install:
 - pip install -U setuptools
 - travis_wait pip install pysftp pandas boto3
 - python setup.py install
+- |
+  if [ $COVERAGE ]; then
+    pip install codecov
+  fi
 
 before_script:
 - | # decrypt credentials used in tests
@@ -67,15 +72,18 @@ before_script:
     mv test.synapseConfig ~/.synapseConfig
   fi
 
-
 script:
-- nosetests --traverse-namespace -s tests/unit
+- |
+  if [ $COVERAGE ]; then
+    nosetests --with-coverage --traverse-namespace -s tests/unit
+    codecov
+  else
+     nosetests --traverse-namespace -s tests/unit
+  fi
 - |
   if [ "${TRAVIS_PULL_REQUEST}" = "false" ];then
     nosetests --traverse-namespace -s -v tests/integration
   else
     echo "Skipping integration tests";
   fi
-
-
 
