@@ -186,6 +186,19 @@ class UploadAttempt:
 
             return refreshed_url
 
+    def _add_part_to_synapse(self, part_number, md5_hex, session):
+        # tell synapse that we uploaded that part successfully
+        return self._syn.restPUT(
+            "/file/multipart/{upload_id}/add/{part_number}?partMD5Hex={md5}"
+            .format(
+                upload_id=self._upload_id,
+                part_number=part_number,
+                md5=md5_hex,
+            ),
+            requests_session=session,
+            endpoint=self._syn.fileHandleEndpoint
+        )
+
     def _handle_part(self, part_number):
         with self._lock:
             if self._aborted:
@@ -234,17 +247,7 @@ class UploadAttempt:
                 else:
                     raise
 
-        # now tell synapse that we uploaded that part successfully
-        self._syn.restPUT(
-            "/file/multipart/{upload_id}/add/{part_number}?partMD5Hex={md5}"
-            .format(
-                upload_id=self._upload_id,
-                part_number=part_number,
-                md5=md5_hex,
-            ),
-            requests_session=session,
-            endpoint=self._syn.fileHandleEndpoint
-        )
+        self._add_part_to_synapse(part_number, md5_hex, session)
 
         # remove so future batch pre_signed url fetches will exclude this part
         with self._lock:
