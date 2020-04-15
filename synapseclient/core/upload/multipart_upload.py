@@ -199,6 +199,12 @@ class UploadAttempt:
             endpoint=self._syn.fileHandleEndpoint
         )
 
+    def _upload_chunk(self, session, pre_signed_part_url, chunk):
+        return session.put(
+            pre_signed_part_url,
+            chunk,
+        )
+
     def _handle_part(self, part_number):
         with self._lock:
             if self._aborted:
@@ -220,9 +226,10 @@ class UploadAttempt:
 
         for retry in range(2):
             try:
-                response = session.put(
+                response = self._upload_chunk(
+                    session,
                     pre_signed_part_url,
-                    chunk,
+                    chunk
                 )
                 _raise_for_status(response)
 
