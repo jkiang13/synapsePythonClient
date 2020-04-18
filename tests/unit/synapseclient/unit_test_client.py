@@ -1264,24 +1264,52 @@ def test_max_threads_bounded():
     assert_equal(syn.max_threads, 1)
 
 
-def test_get_transfer_config_max_threads():
-    """Verify reading transfer.maxThreads from synapseConfig"""
+def test_init_transfer_config_settings():
+    """Verify reading transfer settings from synapseConfig"""
 
     # note that RawConfigParser lower cases its option values so we
     # simulate that behavior in our mocked values here
 
     with patch.object(syn, "_get_config_section_dict") as mock_config_dict:
         empty_value_dicts = [{}]
-        empty_value_dicts.extend([{'max_threads': v} for v in ('', None)])
+        empty_value_dicts.extend([
+            {'max_threads': v, 'part_size': v} for v in ('', None)
+        ])
         for empty_value_dict in empty_value_dicts:
             mock_config_dict.return_value = empty_value_dict
-            assert_is_none(syn._get_transfer_config_max_threads())
+            syn._init_transfer_config_settings()
+            assert_equal(client.DEFAULT_NUM_THREADS, syn.max_threads)
+            assert_equal(client.DEFAULT_PART_SIZE, syn.part_size)
 
-        for max_threads in (1, 7, 100):
-            mock_config_dict.return_value = {'max_threads': str(max_threads)}
-            assert_equal(max_threads, syn._get_transfer_config_max_threads())
+        for (
+            (in_max_threads, out_max_threads),
+            (in_part_size, out_part_size)
+        )in [
+            ((0, 1), (1, client.MIN_PART_SIZE)),
+            ((7, 7), (client.MIN_PART_SIZE + 1, client.MIN_PART_SIZE + 1)),
+            ((client.MAX_THREADS_CAP + 1, client.MAX_THREADS_CAP),
+             (client.DEFAULT_PART_SIZE, client.DEFAULT_PART_SIZE))
+        ]:
+            mock_config_dict.return_value = {
+                'max_threads': str(in_max_threads),
+                'part_size': str(in_part_size),
+            }
+            syn._init_transfer_config_settings()
+            assert_equal(out_max_threads, syn.max_threads)
+            assert_equal(out_part_size, syn.part_size)
 
-        with assert_raises(ValueError):
-            for invalid_value in ('not a number', '12.2', 'true'):
-                mock_config_dict.return_value = {'max_threads': invalid_value}
-                syn._get_transfer_config_max_threads()
+        for invalid_value in ('not a number', '12.2', 'true'):
+            with assert_raises(ValueError):
+                mock_config_dict.return_value = {
+                    'max_threads': invalid_value,
+                    'part_size': client.DEFAULT_PART_SIZE,
+                }
+                syn._init_transfer_config_settings()
+
+            with assert_raises(ValueError):
+                mock_config_dict.return_value = {
+                    'max_threads': client.DEFAULT_NUM_THREADS,
+                    'part_size': invalid_value
+                }
+                syn._init_transfer_config_settings()
+

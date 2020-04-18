@@ -11,9 +11,10 @@ from synapseclient.core.exceptions import (
     SynapseUploadAbortedException,
     SynapseUploadFailedException,
 )
+
+from synapseclient.client import DEFAULT_PART_SIZE
 import synapseclient.core.upload.multipart_upload
 from synapseclient.core.upload.multipart_upload import (
-    DEFAULT_PART_SIZE,
     MAX_NUMBER_OF_PARTS,
     MIN_PART_SIZE,
     _multipart_upload,
@@ -719,7 +720,7 @@ class TestMultipartUpload:
         with various parameterizations applied.  Verify that parameters
         are validated/adjusted as expected."""
 
-        syn = mock.Mock()
+        syn = mock.Mock(part_size=DEFAULT_PART_SIZE)
         chunk_fn = mock.Mock()
         md5_hex = 'ab123'
         dest_file_name = 'foo'
@@ -812,7 +813,7 @@ class TestMultipartUpload:
         """Verify we recover on a failed upload if a subsequent
         retry succeeds."""
 
-        syn = mock.Mock()
+        syn = mock.Mock(part_size=DEFAULT_PART_SIZE)
         chunk_fn = mock.Mock()
         md5_hex = 'ab123'
         file_size = 1234
@@ -850,7 +851,7 @@ class TestMultipartUpload:
         """Verify if we run out of upload attempts we give up
         and raise the failure."""
 
-        syn = mock.Mock()
+        syn = mock.Mock(part_size=DEFAULT_PART_SIZE)
         chunk_fn = mock.Mock()
         md5_hex = 'ab123'
         file_size = 1234

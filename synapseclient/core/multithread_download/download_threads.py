@@ -21,7 +21,6 @@ from http import HTTPStatus
 MAX_QUEUE_SIZE: int = 20
 MAX_RETRIES: int = 20
 MiB: int = 2 ** 20
-SYNAPSE_DEFAULT_DOWNLOAD_PART_SIZE: int = 8 * MiB
 MAX_CHUNK_WRITE_SIZE = 2 * MiB
 ISO_AWS_STR_FORMAT: str = '%Y%m%dT%H%M%SZ'
 CONNECT_FACTOR: int = 3
@@ -291,7 +290,7 @@ def download_file(client,
     data_chunk_download_threads = [DataChunkDownloadThread(pre_signed_url_provider, range_queue, data_queue)
                                    for _ in range(max(num_threads, 1))]
 
-    chunk_range_generator = _generate_chunk_ranges(file_size)
+    chunk_range_generator = _generate_chunk_ranges(file_size, client.part_size)
 
     return _download_file(data_queue, range_queue,
                           write_to_file_thread, data_chunk_download_threads,
@@ -344,17 +343,19 @@ def _download_file(data_queue: CloseableQueue,
 
 
 def _generate_chunk_ranges(file_size: int,
+                           chunk_size: int,
                            ) -> Generator:
     """
     Creates a generator which yields byte ranges and meta data required to make a range request download of url and
     write the data to file_name located at path. Download chunk sizes are 8MB by default.
 
     :param file_size: The size of the file
+    :param chunk_size: The size of the chunk
     :return: A generator of byte ranges and meta data needed to download the file in a multi-threaded manner
     """
-    for start in range(0, file_size, SYNAPSE_DEFAULT_DOWNLOAD_PART_SIZE):
+    for start in range(0, file_size, chunk_size):
         # the start and end of a range in HTTP are both inclusive
-        end = min(start + SYNAPSE_DEFAULT_DOWNLOAD_PART_SIZE, file_size) - 1
+        end = min(start + chunk_size, file_size) - 1
         yield start, end
 
 

@@ -319,9 +319,7 @@ class TestDownloadThread:
 
 def test_generate_chunk_ranges():
     # test using smaller chunk size
-    download_threads.SYNAPSE_DEFAULT_DOWNLOAD_PART_SIZE = 8
-
-    result = [x for x in download_threads._generate_chunk_ranges(18)]
+    result = [x for x in download_threads._generate_chunk_ranges(18, 8)]
 
     expected = [(0, 7), (8, 15), (16, 17)]
 

@@ -96,7 +96,10 @@ PUBLIC = 273949  # PrincipalId of public "user"
 AUTHENTICATED_USERS = 273948
 DEBUG_DEFAULT = False
 REDIRECT_LIMIT = 5
+
 MAX_THREADS_CAP = 128
+DEFAULT_PART_SIZE = 8 * MB
+MIN_PART_SIZE = 5 * MB
 
 # Defines the standard retry policy applied to the rest methods
 # The retry period needs to span a minute because sending messages is limited to 10 per 60 seconds.
@@ -205,7 +208,7 @@ class Synapse(object):
         self.table_query_max_sleep = 20
         self.table_query_timeout = 600  # in seconds
         self.multi_threaded = False  # if set to True, multi threaded download will be used for http and https URLs
-        self.max_threads = self._get_transfer_config_max_threads() or DEFAULT_NUM_THREADS
+        self._init_transfer_config_settings()
 
         # TODO: remove once most clients are no longer on versions <= 1.7.5
         cached_sessions.migrate_old_session_file_credentials_if_necessary(self)
@@ -230,6 +233,14 @@ class Synapse(object):
     @max_threads.setter
     def max_threads(self, value: int):
         self._max_threads = min(max(value, 1), MAX_THREADS_CAP)
+
+    @property
+    def part_size(self):
+        return self._part_size
+
+    @part_size.setter
+    def part_size(self, value: int):
+        self._part_size = max(value, MIN_PART_SIZE)
 
     @property
     def username(self):
@@ -405,14 +416,27 @@ class Synapse(object):
         config_section = endpoint + "/" + bucket
         return self._get_config_section_dict(config_section).get("profile_name", "default")
 
-    def _get_transfer_config_max_threads(self):
-        max_threads = self._get_config_section_dict('transfer').get('max_threads')
-        if max_threads:
-            try:
-                return int(max_threads)
-            except ValueError as cause:
-                raise ValueError("Invalid transfer.maxThreads config setting (%s)", max_threads) from cause
-        return None
+    def _init_transfer_config_settings(self):
+        transfer_config = self._get_config_section_dict('transfer')
+        for key, default in (
+            ('max_threads', DEFAULT_NUM_THREADS),
+            ('part_size', DEFAULT_PART_SIZE),
+        ):
+            int_val = default
+            int_str = transfer_config.get(key)
+
+            if int_str:
+                try:
+                    int_val = int(int_str)
+                except ValueError as cause:
+                    raise ValueError(
+                        "Invalid transfer.{} config setting ({})".format(
+                            key,
+                            int_str,
+                        )
+                    ) from cause
+
+            setattr(self, key, int_val)
 
     def _getSessionToken(self, email, password):
         """Returns a validated session token."""

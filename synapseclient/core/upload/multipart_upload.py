@@ -37,7 +37,6 @@ MAX_NUMBER_OF_PARTS = 10000
 MIN_PART_SIZE = 5 * MB
 
 # ancient tribal knowledge
-DEFAULT_PART_SIZE = 8 * MB
 MAX_RETRIES = 7
 
 
@@ -517,7 +516,7 @@ def _multipart_upload(
     max_threads: int = None,
 ):
 
-    part_size = part_size or DEFAULT_PART_SIZE
+    part_size = part_size or syn.part_size
     part_size = max(
         part_size,
         MIN_PART_SIZE,
