@@ -174,6 +174,12 @@ The purpose of synapseutils is to create a space filled with convenience functio
         print(filename)
         
 
+Contributing
+------------
+
+We welcome contributions to synapseclient. See [here](CONTRIBUTING.md) for information on how you can contribute.
+
+
 License and Copyright
 ---------------------
 

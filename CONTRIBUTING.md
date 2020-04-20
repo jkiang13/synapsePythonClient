@@ -75,9 +75,48 @@ nosetests -vs tests/unit
 nosetests -vs tests/integration
 ```
 
+Integration tests connect to back end services and you will need to configure an accounut in order to be able to run these.
+
 To test a specific feature, specify the full path to the function to run:
 
 ```
 # Test table query functionality from the command line client
 nosetests -vs tests/integration/test_command_line_client.py:test_table_query
 ````
+
+#### Measuring test coverage
+
+Unit test coverage thoroughness can be measured through coverage reports that track which lines of code were exercised during the execution of unit tests. To generate a coverage report while running tests run the following command (in place of running the tests without a report as above), first ensure that you have installed the "developer" dependencies of project. To do so execute the following from the synapseclient root.
+
+```
+pip install -e .[develop]
+```
+This will install the development "extra" depdendencies in addition to thsoe strictly required to run the client. Then run the following command:
+
+```                                                                                                                                                                                                                     j
+nosetests --with-coverage --cover-html --cover-package=synapseclient --cover-package=synapseutils --traverse-namespace -s tests/unit
+```
+
+This will generate a "coverage-report" directory at the working directory and measure all the python code in the "synapseclient" and "synapseutil" modules.  The document tree of the html bundle is "index.html". You can narrow the scope of the report and/or the code being measured by specifying difference --cover-packages and running specific tests (as described in the previous section).
+
+
+#### Automated Tests
+
+The synapseclient GitHub repository is configured to run tests automatically on every branch push as well as some other events using [GitHub Actions](https://github.com/features/actions). Your fork inherits these tests and tests will automatically run unless you disable them (repository Settings -> Actions). You also choose to change the notification settings.
+
+In the past synapseclient automated tests have been spread across Travis CI, a private Jenkins server, and AppVeyor. Going forward we are going to try to consolidate to GitHub actions.
+
+### Style
+
+All code should conform to [PEP8](https://www.python.org/dev/peps/pep-0008/) styling for uniformity and readability. We deviate from the standard only in allowing 120 characters rather than 80 as defined in PEP8. The source code in the repo should be maintained free of any other syntax or formatting issues that do not adhere to the PEP8 standard (TODO fix all preexisting issues... before publishing this). When you generate a pull request if your changes include any violations of PEP8 you will be asked to address them before your changes can are approved.
+
+To check your PEP8 conformance prior to submitting a pull request, first ensure that you have installed the developer "extra" dependencies of synapseclient:
+ ```
+pip install -e .[develop]
+```
+Then you can run the following command:
+```
+flake8 synapseclient synapseutils
+```
+from the synapseclient root directory. Each violation of PEP8 will be individually listed. You can also specify specific files or folders to narrow the scope of your check.
+k
