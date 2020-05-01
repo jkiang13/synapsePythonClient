@@ -24,7 +24,7 @@ with open("README.md", "r") as fh:
 data_files = [(os.path.expanduser('~'), ['synapseclient/.synapseConfig'])] if not os.path.exists(os.path.expanduser('~/.synapseConfig')) else []
 
 test_deps = ['nose', 'mock']
-develop_deps = ['flake8', 'coverage']
+develop_deps = ['flake8', 'codecov']
 develop_deps.extend(test_deps)
 
 setuptools.setup(
