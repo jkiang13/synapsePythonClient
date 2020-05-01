@@ -23,6 +23,10 @@ with open("README.md", "r") as fh:
 # make sure not to overwrite existing .synapseConfig with our example one
 data_files = [(os.path.expanduser('~'), ['synapseclient/.synapseConfig'])] if not os.path.exists(os.path.expanduser('~/.synapseConfig')) else []
 
+test_deps = ['nose', 'mock']
+develop_deps = ['flake8', 'coverage']
+develop_deps.extend(test_deps)
+
 setuptools.setup(
     # basic
     name='synapseclient',
@@ -40,6 +44,7 @@ setuptools.setup(
         'pandas': ["pandas==0.25.0"],
         'pysftp': ["pysftp>=0.2.8"],
         'boto3' : ["boto3"],
+        'develop': develop_deps,
         ':sys_platform=="linux2" or sys_platform=="linux"': ['keyrings.alt==3.1'],
     },
 
@@ -55,7 +60,7 @@ setuptools.setup(
 
     # test
     test_suite='nose.collector',
-    tests_require=['nose', 'mock'],
+    tests_require=test_deps,
 
     # metadata to display on PyPI
     description=description,
