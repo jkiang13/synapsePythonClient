@@ -19,26 +19,32 @@ jobs:
         with:
           python-version: '3.8'
 
+      # we cache the venv for reuse in subsequent builds.
+      # pandas installation in particular can take a while if wheel isn't detected so caching the venv saves minutes.
+
       - id: cache-venv-linux
         uses: actions/cache@v1
         if: startsWith(runner.os, 'Linux')
         with:
           path: venv
-          key: ${{ runner.os }}-venv-${{ hashFiles('setup.py') }}-${{ hashFiles('.github/**') }}
+          key: ${{ runner.os }}-venv-v2-${{ hashFiles('setup.py') }}
+#          key: ${{ runner.os }}-venv-${{ hashFiles('setup.py') }}-${{ hashFiles('.github/**') }}
 
       - id: cache-venv-macos
         uses: actions/cache@v1
         if: startsWith(runner.os, 'macOS')
         with:
           path: venv
-          key: ${{ runner.os }}-venv-${{ hashFiles('setup.py') }}-${{ hashFiles('.github/**') }}
+          key: ${{ runner.os }}-venv-v2-${{ hashFiles('setup.py') }}
+#          key: ${{ runner.os }}-venv-${{ hashFiles('setup.py') }}-${{ hashFiles('.github/**') }}
 
       - id: cache-venv-windows
         uses: actions/cache@v1
         if: startsWith(runner.os, 'Windows')
         with:
           path: venv
-          key: ${{ runner.os }}-venv-${{ hashFiles('setup.py') }}-${{ hashFiles('.github/**') }}
+          key: ${{ runner.os }}-venv-v2-${{ hashFiles('setup.py') }}
+#          key: ${{ runner.os }}-venv-${{ hashFiles('setup.py') }}-${{ hashFiles('.github/**') }}
 
       - name: set-venv-path
         shell: bash
@@ -62,6 +68,11 @@ jobs:
         run: |
          source $VENV_ACTIVATE_PATH
          nosetests --with-coverage --cover-html --cover-package=synapseclient --cover-package=synapseutils --traverse-namespace -s tests/unit
+
+      - name: Generate test annotation
+        run: |
+          text="This is an Error"
+          echo "::error file=.github/workflows/test.yml,line=75,col=5::$text"
 
       - uses: actions/upload-artifact@v2
         with:
