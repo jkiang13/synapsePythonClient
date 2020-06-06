@@ -73,6 +73,7 @@ jobs:
         run: |
           text="This is an Error"
           echo "::error file=.github/workflows/test.yml,line=75,col=5::$text"
+          echo "::error file=synapseclient/client.py,line=75,col=5::$text"
 
       - uses: actions/upload-artifact@v2
         with:
