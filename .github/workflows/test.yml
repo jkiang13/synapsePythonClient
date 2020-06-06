@@ -24,21 +24,21 @@ jobs:
         if: startsWith(runner.os, 'Linux')
         with:
           path: venv
-          key: ${{ runner.os }}-venv-v2-${{ hashFiles('setup.py') }}
+          key: ${{ runner.os }}-venv-${{ hashFiles('setup.py') }}-${{ hashFiles('.github/**') }}
 
       - id: cache-venv-macos
         uses: actions/cache@v1
         if: startsWith(runner.os, 'macOS')
         with:
           path: venv
-          key: ${{ runner.os }}-venv-v2-${{ hashFiles('setup.py') }}
+          key: ${{ runner.os }}-venv-${{ hashFiles('setup.py') }}-${{ hashFiles('.github/**') }}
 
       - id: cache-venv-windows
         uses: actions/cache@v1
         if: startsWith(runner.os, 'Windows')
         with:
           path: venv
-          key: ${{ runner.os }}-venv-v2-${{ hashFiles('setup.py') }}
+          key: ${{ runner.os }}-venv-${{ hashFiles('setup.py') }}-${{ hashFiles('.github/**') }}
 
       - name: set-venv-path
         shell: bash
