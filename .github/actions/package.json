@@ -1,0 +1,12 @@
+{
+  "name": "js-action",
+  "version": "1.0.0",
+  "description": "github test private action",
+  "main": "index.js",
+  "license": "mit",
+  "private": true,
+  "dependencies": {
+    "@actions/core": "^1.2.4",
+    "@actions/github": "^3.0.0"
+  }
+}
