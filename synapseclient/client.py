@@ -26,6 +26,7 @@ More information
 
 See also the `Synapse API documentation <https://docs.synapse.org/rest/>`_.
 
+iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii
 """
 import collections
 import collections.abc
