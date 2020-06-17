@@ -1878,6 +1878,9 @@ def test_store__existing_no_update():
          patch.object(syn, '_updateEntity') as mock_updatentity, \
          patch.object(syn, 'get'):
 
+        foo = syn
+        print(syn.__class__)
+
         mock_get_entity_bundle.return_value = returned_bundle
         mock_createEntity.side_effect = SynapseHTTPError(response=DictObject({'status_code': 409}))
 
@@ -1890,6 +1893,7 @@ def test_store__existing_no_update():
 
         # should not have attempted an update
         assert_false(mock_updatentity.called)
+
 
 
 def test_get_submission_with_annotations():
