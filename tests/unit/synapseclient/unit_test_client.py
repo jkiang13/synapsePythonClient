@@ -1939,6 +1939,7 @@ def test_get_submission_with_annotations():
 
 
 def test_foo():
+    foo = syn
     pass
 
 
