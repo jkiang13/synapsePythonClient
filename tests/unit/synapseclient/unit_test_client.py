@@ -1941,10 +1941,8 @@ def test_get_submission_with_annotations():
 def test_foo():
     foo = syn
     bar = syn
-    baz = syn
     print(foo)
     print(bar)
-    print(syn)
 
     pass
 
