@@ -302,10 +302,9 @@ def test_extract_zip_file_to_directory(mocked_path_exists, mocked_makedir, mocke
     finally:
         rmtree(target_dir, ignore_errors=True)
 
-
 def test_snake_case():
     for (input_word, expected_output) in [
-        ('', ''),
+        ('', ''), 
         ('A', 'a'),
         ('a', 'a'),
         ('123', '123'),
@@ -315,3 +314,10 @@ def test_snake_case():
         ('camel123Abc', 'camel123_abc'),
     ]:
         assert_equals(expected_output, utils.snake_case(input_word))
+
+def test_new():
+
+    pass
+
+
+

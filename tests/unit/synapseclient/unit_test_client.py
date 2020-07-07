@@ -1871,12 +1871,14 @@ def test_store__existing_no_update():
         'annotations': {}
     }
 
+
     with patch.object(syn, '_getEntityBundle') as mock_get_entity_bundle, \
          patch.object(synapseclient.client, 'upload_file_handle', return_value=returned_file_handle), \
          patch.object(syn.cache, 'contains', return_value=True), \
-         patch.object(syn, '_createEntity') as mock_createEntity, \
+         patch.object(syn,  '_createEntity') as mock_createEntity, \
          patch.object(syn, '_updateEntity') as mock_updatentity, \
-         patch.object(syn, 'get'):
+         patch.object( syn,  'get'):
+
 
         mock_get_entity_bundle.return_value = returned_bundle
         mock_createEntity.side_effect = SynapseHTTPError(response=DictObject({'status_code': 409}))
