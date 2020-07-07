@@ -1936,3 +1936,7 @@ def test_get_submission_with_annotations():
         )
 
         assert_equal(evaluation_id, response["evaluationId"])
+
+
+def test_foo():
+    pass
