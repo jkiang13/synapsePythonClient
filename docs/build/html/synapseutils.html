@@ -116,7 +116,7 @@ Default is False</p>
 Default is False</p>
 </dd>
 </dl>
-<p>Examples::                        
+<p>Examples::
 import synapseutils
 import synapseclient
 syn = synapseclient.login()
@@ -125,12 +125,12 @@ synapseutils.copy(syn, …)</p>
 – COPYING FILES</p>
 <dl class="field-list simple">
 <dt class="field-odd">param version</dt>
-<dd class="field-odd"><p>Can specify version of a file. 
+<dd class="field-odd"><p>Can specify version of a file.
 Default to None</p>
 </dd>
 <dt class="field-even">param updateExisting</dt>
-<dd class="field-even"><p>When the destination has an entity that has the same name, 
-users can choose to update that entity.  
+<dd class="field-even"><p>When the destination has an entity that has the same name,
+users can choose to update that entity.
 It must be the same entity type
 Default to False</p>
 </dd>
@@ -192,13 +192,14 @@ synapseutils.copy(syn, “syn123450”,”syn345678”,excludeTypes=[“file”,
 <span id="sync"></span><h1>sync<a class="headerlink" href="#module-synapseutils.sync" title="Permalink to this headline">¶</a></h1>
 <dl class="py function">
 <dt id="synapseutils.sync.generateManifest">
-<code class="sig-prename descclassname">synapseutils.sync.</code><code class="sig-name descname">generateManifest</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">syn</span></em>, <em class="sig-param"><span class="n">allFiles</span></em>, <em class="sig-param"><span class="n">filename</span></em><span class="sig-paren">)</span><a class="headerlink" href="#synapseutils.sync.generateManifest" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">synapseutils.sync.</code><code class="sig-name descname">generateManifest</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">syn</span></em>, <em class="sig-param"><span class="n">allFiles</span></em>, <em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">provenance_cache</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#synapseutils.sync.generateManifest" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generates a manifest file based on a list of entities objects.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>allFiles</strong> – A list of File Entities</p></li>
 <li><p><strong>filename</strong> – file where manifest will be written</p></li>
+<li><p><strong>provenance_cache</strong> – an optional dict of known provenance dicts keyed by entity ids</p></li>
 </ul>
 </dd>
 </dl>
@@ -521,7 +522,7 @@ Any additional columns will be added as annotations.</p>
     </div>
     <div class="footer">
     &copy; <a href="http://sagebase.org/">Sage Bionetworks</a>.
-      Last updated on May 28, 2020.
+      Last updated on Jul 08, 2020.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.3.
     </div>
     <script type="text/javascript">
