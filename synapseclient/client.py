@@ -2228,7 +2228,7 @@ class Synapse(object):
             output_format=output_format, min_remaining_life=min_remaining_life
         )
 
-    def create_s3_storage_location(self, *,
+    def create_s3_storage_location(self,
                                    parent=None, folder_name=None,
                                    folder=None,
                                    bucket_name=None, base_key=None,
