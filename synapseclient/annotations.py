@@ -227,7 +227,7 @@ class Annotations(dict):
     id: str
     etag: str
 
-    def __init__(self, id: typing.Union[str, int, Entity], etag: str, values: typing.Dict = None, **kwargs):
+    def __init__(self, id, etag, values = None, **kwargs):
         """
         Create an Annotations object taking key value pairs from a dictionary or from keyword arguments.
         System properties id, etag, creationDate and uri become attributes of the object.
