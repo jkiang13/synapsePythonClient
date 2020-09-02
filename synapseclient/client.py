@@ -2009,7 +2009,7 @@ class Synapse(object):
 
         return self.restPOST('/externalFileHandle', json.dumps(file_handle), self.fileHandleEndpoint)
 
-    def create_external_s3_file_handle(self, bucket_name, s3_file_key, file_path, *,
+    def create_external_s3_file_handle(self, bucket_name, s3_file_key, file_path,
                                        parent=None, storage_location_id=None, mimetype=None):
         """
         Create an external S3 file handle for e.g. a file that has been uploaded directly to
