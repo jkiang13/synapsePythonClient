@@ -1,86 +1,167 @@
 name: test
 
 on:
-  push
+
+  push:
+    branches:
+      - '**'
+
+    # but not on a push to a release tag. we auto-commit to release tags as part
+    # of the deployment to ensure the version file is up to date.
+    # we don't need that push to trigger another build.
+    tags-ignore:
+      - '**'
 
 jobs:
-  test:
 
-    strategy:
-      matrix:
-        os: [ubuntu-18.04, macos-10.15, windows-2019]
-        python: [3.6, 3.7, 3.8]
- 
-    runs-on: ${{ matrix.os }}
+#  test:
+#
+#    strategy:
+#      matrix:
+#        os: [ubuntu-18.04, macos-10.15, windows-2019]
+#        python: [3.6, 3.7, 3.8]
+#
+#    runs-on: ${{ matrix.os }}
+#
+#    steps:
+#      - uses: actions/checkout@v2
+#
+#      - uses: actions/setup-python@v2
+#        with:
+#          python-version: ${{ matrix.python }}
+#
+#      - id: cache-venv-linux
+#        uses: actions/cache@v1
+#        if: startsWith(runner.os, 'Linux')
+#        with:
+#          path: venv
+#          key: ${{ runner.os }}-venv-v2-${{ hashFiles('setup.py') }}
+#
+#      - id: cache-venv-macos
+#        uses: actions/cache@v1
+#        if: startsWith(runner.os, 'macOS')
+#        with:
+#          path: venv
+#          key: ${{ runner.os }}-venv-v2-${{ hashFiles('setup.py') }}
+#
+#      - id: cache-venv-windows
+#        uses: actions/cache@v1
+#        if: startsWith(runner.os, 'Windows')
+#        with:
+#          path: venv
+#          key: ${{ runner.os }}-venv-v2-${{ hashFiles('setup.py') }}
+#
+#      - name: set-venv-path
+#        shell: bash
+#        run: |
+#          VENV_ACTIVATE_PATH="venv/bin/activate"
+#          if [ "${{startsWith(runner.os, 'Windows')}}" == "true" ]; then
+#            VENV_ACTIVATE_PATH="venv/Scripts/activate"
+#          fi
+#          echo "::set-env name=VENV_ACTIVATE_PATH::$VENV_ACTIVATE_PATH"
+#
+#      # we create a venv if we weren't able to restore one from the cache
+#      - name: create-venv
+#        if: ${{ steps.cache-venv-linux.outputs.cache-hit != 'true' && steps.cache-venv-macos.outputs.cache-hit != 'true' && steps.cache-venv-windows.outputs-cache-hit != 'true' }}
+#        shell: bash
+#        run: |
+#          python -m venv venv
+#          source $VENV_ACTIVATE_PATH
+#          pip install -e ".[boto3,pandas,pysftp,tests]"
+#
+#          # ensure that c extensions are installed on windows
+#          # https://stackoverflow.com/a/59346525
+#          if [ "${{startsWith(runner.os, 'Windows')}}" == "true" ]; then
+#            pip uninstall -y numpy
+#            pip uninstall -y setuptools
+#            pip install setuptools
+#            pip install numpy
+#          fi
+#
+#      - name: run-unit-tests
+#        shell: bash
+#        run: |
+#          source $VENV_ACTIVATE_PATH
+#          pytest -sv tests/unit
+#
+#      # run integration tests iff the decryption keys for the test configuration are available.
+#      # they will not be available in pull requests from forks.
+#      - name: run-integration-tests
+#        shell: bash
+#        run: |
+#          if [ -z "${{ secrets.encrypted_d17283647768_key }}" ]  || [ -z "${{ secrets.encrypted_d17283647768_key }}" ]; then
+#            echo "No test configuration decryption keys available, skipping integration tests"
+#
+#          else
+#            # host used in pysftp tests
+#            mkdir -p ~/.ssh
+#            ssh-keyscan -H ec2-18-209-45-78.compute-1.amazonaws.com >> ~/.ssh/known_hosts
+#
+#            # decrypt the encrypted test synapse configuration
+#            openssl aes-256-cbc -K ${{ secrets.encrypted_d17283647768_key }} -iv ${{ secrets.encrypted_d17283647768_iv }} -in test.synapseConfig.enc -out test.synapseConfig -d
+#            mv test.synapseConfig ~/.synapseConfig
+#
+#            source $VENV_ACTIVATE_PATH
+#            pytest -sv tests/integration
+#          fi
+
+  build_deploy:
+
+    runs-on: ubuntu-18.04
 
     steps:
       - uses: actions/checkout@v2
 
       - uses: actions/setup-python@v2
         with:
-          python-version: ${{ matrix.python }}
+          python-version: 3.6
 
-      - id: cache-venv-linux
-        uses: actions/cache@v1
-        if: startsWith(runner.os, 'Linux')
-        with:
-          path: venv
-          key: ${{ runner.os }}-venv-v2-${{ hashFiles('setup.py') }}
-
-      - id: cache-venv-macos
-        uses: actions/cache@v1
-        if: startsWith(runner.os, 'macOS')
-        with:
-          path: venv
-          key: ${{ runner.os }}-venv-v2-${{ hashFiles('setup.py') }}
-
-      - id: cache-venv-windows
-        uses: actions/cache@v1
-        if: startsWith(runner.os, 'Windows')
-        with:
-          path: venv
-          key: ${{ runner.os }}-venv-v2-${{ hashFiles('setup.py') }}
-
-      - name: set-venv-path
+      - name: set-release-env
         shell: bash
         run: |
-          VENV_ACTIVATE_PATH="venv/bin/activate"
-          if [ "${{startsWith(runner.os, 'Windows')}}" == "true" ]; then
-            VENV_ACTIVATE_PATH="venv/Scripts/activate"
-          fi
-          echo "::set-env name=VENV_ACTIVATE_PATH::$VENV_ACTIVATE_PATH"
-
-      # we create a venv if we weren't able to restore one from the cache
-      - name: create-venv
-        if: ${{ steps.cache-venv-linux.outputs.cache-hit != 'true' && steps.cache-venv-macos.outputs.cache-hit != 'true' && steps.cache-venv-windows.outputs-cache-hit != 'true' }}
-        shell: bash
-        run: |
-          python -m venv venv
-          source $VENV_ACTIVATE_PATH
-          pip install -e ".[boto3,pandas,tests]"
-
-      - name: run-unit-tests
-        shell: bash
-        run: |
-          source $VENV_ACTIVATE_PATH
-          pytest -sv tests/unit
-
-      # run integration tests iff the decryption keys for the test configuration are available.
-      # they will not be available in pull requests from forks.
-      - name: run-integration-tests
-        shell: bash
-        run: |
-          if [ -z "${{ secrets.encrypted_d17283647768_key }}" ]  || [ -z "${{ secrets.encrypted_d17283647768_key }}" ]; then
-            echo "No test configuration decryption keys available, skipping integration tests"
-
-          else
-            # decrypt the encrypted test synapse configuration
-            openssl aes-256-cbc -K ${{ secrets.encrypted_d17283647768_key }} -iv ${{ secrets.encrypted_d17283647768_iv }} -in test.synapseConfig.enc -out test.synapseConfig -d
-            mv test.synapseConfig ~/.synapseConfig
-
-            source $VENV_ACTIVATE_PATH
-            pytest -sv tests/integration
+          BRANCH_NAME=${GITHUB_REF##*/}
+          PROD=false
+          if [[ $BRANCH_NAME =~ ^v?([[:digit:]\.]+)(-rc)? ]]; then
+            VERSION="${BASH_REMATCH[1]}"
+            if [[ -n "${BASH_REMATCH[2]}" ]]; then
+              # the presence of -rc means this is a release candidate/staging build.
+              # we append the a run number so we never have a release candidate
+              # and production build with the same version number
+              VERSION="$VERSION.$GITHUB_RUN_NUMBER"
+            else
+              PROD=true
+            fi
           fi
 
+          echo ::set-env name=VERSION::$VERSION
+          echo ::set-env name=PROD::$PROD
 
+      # update the version file to match the release tag if it doesn't already match
+      - name: update-version
+        shell: bash
+        run: |
+          if [[ -n "$VERSION" ]]; then
+            echo "now here"
 
+            sed "s|\"latestVersion\":.*$|\"latestVersion\":\"$VERSION\",|g" synapseclient/synapsePythonClient > temp
+            rm synapseclient/synapsePythonClient
+            mv temp synapseclient/synapsePythonClient
+
+            git config user.name "pythonsynapseclient"
+            git config user.email "pythonsynapseclient@sagebionetworks.org"
+            git add -u
+            git commit -m "$VERSION released"
+            git push
+            echo "done"
+          fi
+
+      - name: build-package
+        shell: bash
+        run: |
+          python3 -m pip install twine==1.11.0 setuptools==38.6.0
+
+          # install synapseclient
+          python3 setup.py install
+
+          # create distribution
+          python3 setup.py sdist
