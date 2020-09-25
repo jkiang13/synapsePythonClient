@@ -85,7 +85,7 @@ def get_executor(thread_count=DEFAULT_NUM_THREADS):
 
     :return: an Executor
     """
-    if config.single_threaded:
+    if config.single_threaded or thread_count == 1:
         return SingleThreadExecutor()
     else:
         return ThreadPoolExecutor(max_workers=thread_count)

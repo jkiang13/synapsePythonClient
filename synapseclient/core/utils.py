@@ -306,6 +306,12 @@ def _to_iterable(value):
     return value,
 
 
+def chunks(lst, n):
+    """Yield successive n-sized chunks from lst."""
+    for i in range(0, len(lst), n):
+        yield lst[i:i + n]
+
+
 def make_bogus_data_file(n=100, seed=None):
     """
     Makes a bogus data file for testing. It is the caller's responsibility to clean up the file when finished.
