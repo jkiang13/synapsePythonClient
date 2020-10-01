@@ -3441,14 +3441,15 @@ class Synapse(object):
                     )
                     futures.append(future)
 
-        completed = concurrent.futures.wait(futures, return_when=concurrent.futures.FIRST_EXCEPTION).done
+        completed = concurrent.futures.wait(futures, return_when=concurrent.futures.ALL_COMPLETED).done
         for future in completed:
             exception = future.exception()
             if exception:
-                raise ValueError('Failed downloading a file handle') from exception
-
-            file_handle_id, downloaded_path = future.result()
-            file_handle_to_path_map[file_handle_id] = downloaded_path
+                logging.warning('One or more files failed to download and were skipped for the following reason',
+                                exc_info=exception)
+            else:
+                file_handle_id, downloaded_path = future.result()
+                file_handle_to_path_map[file_handle_id] = downloaded_path
 
         return file_handle_to_path_map
 
