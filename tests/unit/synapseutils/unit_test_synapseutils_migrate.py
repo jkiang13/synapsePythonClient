@@ -521,7 +521,10 @@ class TestMigrate:
             mock_syn_table_query.side_effect = mock_syn_table_query_side_effect
             mock_multipart_copy.side_effect = mock_multipart_copy_side_effect
 
-            with tempfile.NamedTemporaryFile(mode='w') as tempf:
+            with sqlite3.connect(':memory:') as conn:
+                conn.cursor().execute('select 1').fetchone()
+
+            with tempfile.NamedTemporaryFile() as tempf:
                 synapseutils.migrate(
                     syn,
                     project,
