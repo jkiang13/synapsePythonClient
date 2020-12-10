@@ -182,6 +182,7 @@ def migrate(
 
     test_import_sqlite3()
     import sqlite3
+    print('Connecting to ' + db_path)
     with sqlite3.connect(db_path) as conn:
 
         cursor = conn.cursor()
