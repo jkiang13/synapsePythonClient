@@ -521,7 +521,7 @@ class TestMigrate:
             mock_syn_table_query.side_effect = mock_syn_table_query_side_effect
             mock_multipart_copy.side_effect = mock_multipart_copy_side_effect
 
-            with tempfile.NamedTemporaryFile() as tempf:
+            with tempfile.NamedTemporaryFile(mode='w') as tempf:
                 synapseutils.migrate(
                     syn,
                     project,
