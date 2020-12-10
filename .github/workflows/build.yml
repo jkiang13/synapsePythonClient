@@ -61,6 +61,8 @@ jobs:
         shell: bash
         run: |
           if [ "${{startsWith(runner.os, 'Windows')}}" == "true" ]; then
+            echo "TMP=$env:USERPROFILE\AppData\Local\Temp" >> $env:GITHUB_ENV
+            echo "TMPDIR=$env:USERPROFILE\AppData\Local\Temp" >> $env:GITHUB_ENV
             echo "TEMP=$env:USERPROFILE\AppData\Local\Temp" >> $env:GITHUB_ENV
           fi
 
