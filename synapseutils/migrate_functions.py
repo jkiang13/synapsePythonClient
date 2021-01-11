@@ -354,7 +354,7 @@ def _ensure_schema(cursor):
 
 def _wait_futures(conn, cursor, futures, return_when, continue_on_error):
     print('waiting on {} futures'.format(len(futures)))
-    completed, futures = concurrent.futures.wait(futures, return_when=return_when)
+    completed, futures = concurrent.futures.wait(futures, return_when=return_when, timeout=10)
     print('done waiting, {} completed'.format(len(completed)))
 
     for completed_future in completed:
@@ -680,8 +680,8 @@ def migrate_indexed_files(
                 # we've run out of migratable sqlite rows, we're done
                 break
 
-        if futures:
-            _wait_futures(
+        while futures:
+            futures = _wait_futures(
                 conn,
                 cursor,
                 futures,
