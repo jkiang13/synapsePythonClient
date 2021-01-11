@@ -356,7 +356,7 @@ def _wait_futures(conn, cursor, futures, return_when, continue_on_error):
     print('waiting on {} futures'.format(len(futures)))
     completed, futures = concurrent.futures.wait(futures, return_when=return_when, timeout=10)
     print('done waiting, {} completed'.format(len(completed)))
-    for i in range(1000):
+    for i in range(10):
         print("waiting {}".format(i))
 
     for completed_future in completed:

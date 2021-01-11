@@ -57,6 +57,8 @@ def with_retry(function, verbose=False,
         if response is not None and hasattr(response, 'status_code'):
             if response.status_code in retry_status_codes:
                 response_message = _get_message(response)
+                for i in range(100):
+                    print('waiting i {} {} {}'.format(i, response.status_code, response))
                 retry = True
                 logger.debug("retrying on status code: %s" % str(response.status_code))
                 # TODO: this was originally printed regardless of 'verbose' was that behavior correct?
