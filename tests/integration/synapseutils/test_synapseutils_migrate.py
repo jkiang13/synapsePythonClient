@@ -125,6 +125,8 @@ def test_migrate_project(request, syn, schedule_for_cleanup, storage_location_id
     assert counts_by_status['INDEXED'] == 7
     assert counts_by_status['ERRORED'] == 0
 
+    assert False
+
     migration_result = synapseutils.migrate_indexed_files(
         syn,
         db_path,
