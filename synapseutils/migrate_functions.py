@@ -356,7 +356,7 @@ def _wait_futures(conn, cursor, futures, return_when, continue_on_error):
     print('waiting on {} futures'.format(len(futures)))
     completed, futures = concurrent.futures.wait(futures, return_when=return_when, timeout=10)
     print('done waiting, {} completed'.format(len(completed)))
-    for i in range(1000):
+    for i in range(10):
         print("waiting {}".format(i))
 
     for completed_future in completed:
@@ -1134,11 +1134,16 @@ def _migrate_table_attached_file(syn, key, from_file_handle_id, storage_location
         'associateObjectType': 'TableEntity',
     }
 
+    for i in range(1000):
+        print('migrating table {}'.format(i))
     to_file_handle_id = multipart_copy(
         syn,
         source_file_handle_association,
         storage_location_id=storage_location_id
     )
+
+    for i in range(1000):
+        print('done migrating table {}'.format(i))
 
     row_mapping = {str(key.col_id): to_file_handle_id}
     partial_rows = [synapseclient.table.PartialRow(row_mapping, key.row_id)]
