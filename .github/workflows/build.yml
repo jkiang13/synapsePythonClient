@@ -84,7 +84,8 @@ jobs:
             openssl aes-256-cbc -K ${{ secrets.encrypted_d17283647768_key }} -iv ${{ secrets.encrypted_d17283647768_iv }} -in test.synapseConfig.enc -out test.synapseConfig -d
             mv test.synapseConfig ~/.synapseConfig
 
-            pytest -sv tests/integration
+            #pytest -sv tests/integration
+            pytest -sv tests/integration/synapseutils/test_synapseutils_migrate.py
           fi
 
   # on a GitHub release, build the pip package and upload it as a GitHub release asset
