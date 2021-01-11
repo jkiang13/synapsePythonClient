@@ -353,7 +353,9 @@ def _ensure_schema(cursor):
 
 
 def _wait_futures(conn, cursor, futures, return_when, continue_on_error):
+    print('waiting on {} futures'.format(len(futures)))
     completed, futures = concurrent.futures.wait(futures, return_when=return_when)
+    print('done waiting, {} completed'.format(len(completed)))
 
     for completed_future in completed:
 
