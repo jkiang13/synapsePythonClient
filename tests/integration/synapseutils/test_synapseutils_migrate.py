@@ -88,19 +88,19 @@ def test_migrate_project(request, syn, schedule_for_cleanup, storage_location_id
 #            name=test_name, columns=table_1_cols, parent=folder_1_entity
 #        )
 #    )
-    table_1_file_col_1_1 = _create_temp_file()
-    table_1_file_handle_1 = syn.uploadFileHandle(table_1_file_col_1_1, table_1)
-    table_1_file_col_1_2 = _create_temp_file()
-    table_1_file_handle_2 = syn.uploadFileHandle(table_1_file_col_1_2, table_1)
-    table_1_file_col_2_1 = _create_temp_file()
-    table_1_file_handle_3 = syn.uploadFileHandle(table_1_file_col_2_1, table_1)
-    table_1_file_col_2_2 = _create_temp_file()
-    table_1_file_handle_4 = syn.uploadFileHandle(table_1_file_col_2_2, table_1)
-
-    data = [
-        [table_1_file_handle_1['id'], 1, table_1_file_handle_2['id']],
-        [table_1_file_handle_3['id'], 2, table_1_file_handle_4['id']],
-    ]
+#    table_1_file_col_1_1 = _create_temp_file()
+#    table_1_file_handle_1 = syn.uploadFileHandle(table_1_file_col_1_1, table_1)
+#    table_1_file_col_1_2 = _create_temp_file()
+#    table_1_file_handle_2 = syn.uploadFileHandle(table_1_file_col_1_2, table_1)
+#    table_1_file_col_2_1 = _create_temp_file()
+#    table_1_file_handle_3 = syn.uploadFileHandle(table_1_file_col_2_1, table_1)
+#    table_1_file_col_2_2 = _create_temp_file()
+#    table_1_file_handle_4 = syn.uploadFileHandle(table_1_file_col_2_2, table_1)
+#
+#    data = [
+#        [table_1_file_handle_1['id'], 1, table_1_file_handle_2['id']],
+#        [table_1_file_handle_3['id'], 2, table_1_file_handle_4['id']],
+#    ]
 
 #    table_1_entity = syn.store(
 #        synapseclient.RowSet(
