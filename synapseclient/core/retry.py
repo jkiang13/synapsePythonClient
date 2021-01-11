@@ -36,6 +36,7 @@ def with_retry(function, verbose=False,
 
     # Retry until we succeed or run out of tries
     total_wait = 0
+    response = None
     while True:
         # Start with a clean slate
         exc = None
@@ -57,8 +58,6 @@ def with_retry(function, verbose=False,
         if response is not None and hasattr(response, 'status_code'):
             if response.status_code in retry_status_codes:
                 response_message = _get_message(response)
-                for i in range(100):
-                    print('waiting i {} {} {}'.format(i, response.status_code, response))
                 retry = True
                 logger.debug("retrying on status code: %s" % str(response.status_code))
                 # TODO: this was originally printed regardless of 'verbose' was that behavior correct?
@@ -90,6 +89,9 @@ def with_retry(function, verbose=False,
         # Wait then retry
         retries -= 1
         if retries >= 0 and retry:
+            for i in range(100):
+                print('waiting i {} {}'.format(i, response))
+
             randomized_wait = wait*random.uniform(0.5, 1.5)
             logger.debug(('total wait time {total_wait:5.0f} seconds\n '
                           '... Retrying in {wait:5.1f} seconds...'.format(total_wait=total_wait, wait=randomized_wait)))
