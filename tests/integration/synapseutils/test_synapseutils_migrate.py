@@ -141,7 +141,7 @@ def test_migrate_project(request, syn, schedule_for_cleanup, storage_location_id
 #    table_file_handles = []
 #    for row in results:
 #        for file_handle_id in row[2:]:
-#            file_handle = syn._getFileHandleDownload(file_handle_id, table_1_id, objectType='TableEntity')['fileHandle']
+#            file_handle = syn._getFileHandleDownload(file_handle_id, table_1_id, objectType='TableEntity')['fileHandle']  # noqa
 #            table_file_handles.append(file_handle)
 #    file_handles.extend(table_file_handles)
 #
