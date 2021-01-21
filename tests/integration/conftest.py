@@ -23,7 +23,8 @@ def syn():
     """
     print("Python version:", sys.version)
 
-    syn = Synapse(debug=False, skip_checks=True)
+    temp_dir = tempfile.TemporaryDirectory()
+    syn = Synapse(debug=False, skip_checks=True, cache_root_dir=temp_dir.name)
     print("Testing against endpoints:")
     print("  " + syn.repoEndpoint)
     print("  " + syn.authEndpoint)
