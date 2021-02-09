@@ -1,0 +1,13 @@
+[authentication]
+username=test
+password=d8xS20hck1Fv
+
+[endpoints]
+repoEndpoint=https://repo-dev.dev.sagebase.org/repo/v1
+authEndpoint=https://repo-dev.dev.sagebase.org/auth/v1
+fileHandleEndpoint=https://repo-dev.dev.sagebase.org/file/v1
+
+[sftp://ec2-18-209-45-78.compute-1.amazonaws.com]
+username: sftpuser
+password: sftppass
+
