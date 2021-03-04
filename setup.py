@@ -35,7 +35,7 @@ test_deps = [
 
 install_requires = [
     'requests>=2.22.0,<3.0',
-    'keyring==12.0.2',
+    'keyring>=12.0.2,<23.0',
     'deprecated>=1.2.4,<2.0',
 ]
 
