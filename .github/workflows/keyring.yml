@@ -75,8 +75,10 @@ jobs:
 
           synapse login -u $USER -p $PASSWORD --rememberMe
 
-          pytest -sv tests/integration/synapseclient/integration_test_Entity.py
+          pytest -sv tests/unit
+          pytest -sv tests/integration/
 
           pip install --upgrade keyring
 
-          pytest -sv tests/integration/synapseclient/integration_test_Entity.py
+          pytest -sv tests/unit
+          pytest -sv tests/integration/
