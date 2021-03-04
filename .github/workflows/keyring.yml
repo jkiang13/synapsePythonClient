@@ -52,7 +52,7 @@ jobs:
             pip install numpy
           fi
 
-     - name: save-to-keyring
+      - name: save-to-keyring
         shell: bash
 
         run: |
