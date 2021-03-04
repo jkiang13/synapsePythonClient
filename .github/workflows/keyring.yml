@@ -1,0 +1,79 @@
+# GitHub Action workflow for testing, building, and releasing the Synapse Python Client.
+
+# - all pushes, releases, and pull requests  are tested against unit tests, and additionally
+#     integration tests if account configuration secrets are available.
+# - releases are additionally packaged, uploaded as build and release artifacts,
+#     and deployed to pypi servers (test.pypi.org for prereleases, and pypi.org for releases)
+#     Release tags must conform to our semver versioning, e.g. v1.2.3 in order to be packaged
+#     for pypi deployment.
+
+name: keyring-check
+
+on:
+  push:
+    # we test all pushed branches, but not tags.
+    # we only push tags with releases, and we handle releases explicitly
+    branches:
+      - '**'
+
+jobs:
+
+  # run unit (and integration tests if account secrets available) on our build matrix
+  keyring-test:
+
+    strategy:
+      matrix:
+        os: [ubuntu-18.04, macos-10.15, windows-2019]
+
+        # if changing the below change the run-integration-tests versions and the check-deploy versions
+        python: [3.6, 3.7, 3.8, 3.9]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python }}
+
+      - name: install-py-dependencies
+        shell: bash
+        run: |
+          pip install -e ".[boto3,pandas,pysftp,tests]"
+          pip install keyring=="12.0.2"
+
+          # ensure that numpy c extensions are installed on windows
+          # https://stackoverflow.com/a/59346525
+          if [ "${{startsWith(runner.os, 'Windows')}}" == "true" ]; then
+            pip uninstall -y numpy
+            pip uninstall -y setuptools
+            pip install setuptools
+            pip install numpy
+          fi
+
+     - name: save-to-keyring
+        shell: bash
+
+        run: |
+          if [ -z "${{ secrets.encrypted_d17283647768_key }}" ]  || [ -z "${{ secrets.encrypted_d17283647768_key }}" ]; then
+            echo "No test configuration decryption keys available, skipping integration tests"
+
+          else
+
+            # decrypt the encrypted test synapse configuration
+            openssl aes-256-cbc -K ${{ secrets.encrypted_d17283647768_key }} -iv ${{ secrets.encrypted_d17283647768_iv }} -in test.synapseConfig.enc -out test.synapseConfig -d
+            mv test.synapseConfig ~/.synapseConfig
+
+          fi
+
+          USER=$(grep username ~/.synapseConfig | cut -d"=" -f2)
+          PASSWORD=$(grep password ~/.synapseConfig | cut -d"=" -f2)
+
+          synapse login -u $USER -p $PASSWORD --rememberMe
+
+          pytest -sv tests/integration/synapseclient/integration_test_Entity.py
+
+          pip install --upgrade keyring
+
+          pytest -sv tests/integration/synapseclient/integration_test_Entity.py
