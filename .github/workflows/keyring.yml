@@ -70,6 +70,9 @@ jobs:
           USER=$(grep username ~/.synapseConfig | head -1 | cut -d"=" -f2)
           PASSWORD=$(grep password ~/.synapseConfig | head -1 | cut -d"=" -f2)
 
+          grep -A3 endpoints ~/.synapseConfig > ~/.synapseConfig.temp
+          mv ~/.synapseConfig.temp ~/.synapseConfig
+
           synapse login -u $USER -p $PASSWORD --rememberMe
 
           pytest -sv tests/integration/synapseclient/integration_test_Entity.py
