@@ -67,8 +67,8 @@ jobs:
 
           fi
 
-          USER=$(grep username ~/.synapseConfig | cut -d"=" -f2)
-          PASSWORD=$(grep password ~/.synapseConfig | cut -d"=" -f2)
+          USER=$(grep username ~/.synapseConfig | head -1 | cut -d"=" -f2)
+          PASSWORD=$(grep password ~/.synapseConfig | head -1 | cut -d"=" -f2)
 
           synapse login -u $USER -p $PASSWORD --rememberMe
 
