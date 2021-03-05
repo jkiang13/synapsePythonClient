@@ -78,6 +78,7 @@ def test_login(syn):
         syn.login(rememberMe=True, silent=True)
 
 
+@skip('no config available')
 def test_login__bad_credentials(syn):
     # nonexistant username and password
     pytest.raises(SynapseAuthenticationError, login, email=str(uuid.uuid4()),
