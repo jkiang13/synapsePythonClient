@@ -10,6 +10,7 @@ from datetime import datetime
 
 import pytest
 from unittest.mock import patch
+from unittest import skip
 
 from synapseclient import client
 from synapseclient import Activity, Annotations, File, Folder, login, Project, Synapse, Team
@@ -18,7 +19,7 @@ from synapseclient.core.exceptions import SynapseAuthenticationError, SynapseHTT
 import synapseclient.core.utils as utils
 from synapseclient.core.version_check import version_check
 
-
+@skip
 def test_login(syn):
     try:
         config = configparser.RawConfigParser()
