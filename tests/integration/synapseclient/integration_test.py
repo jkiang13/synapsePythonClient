@@ -19,7 +19,7 @@ from synapseclient.core.exceptions import SynapseAuthenticationError, SynapseHTT
 import synapseclient.core.utils as utils
 from synapseclient.core.version_check import version_check
 
-@skip
+@skip('no config available')
 def test_login(syn):
     try:
         config = configparser.RawConfigParser()
