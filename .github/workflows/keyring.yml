@@ -82,3 +82,11 @@ jobs:
 
           pytest -sv tests/unit
           pytest -sv tests/integration/
+
+          synapse login -u $USER -p $PASSWORD --rememberMe 
+
+          pip install keyring=="12.0.2" 
+
+          pytest -sv tests/unit
+          pytest -sv tests/integration/
+
