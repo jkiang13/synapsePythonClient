@@ -61,6 +61,6 @@ jobs:
 
           echo $VIRTUAL_ENV
           python -c "import synapseclient; print(synapseclient.__file__)"
-          python -c "import boto; print(boto.__file__)"
+          python -c "import boto3; print(boto3.__file__)"
 
 
