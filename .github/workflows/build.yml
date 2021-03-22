@@ -62,5 +62,6 @@ jobs:
           echo $VIRTUAL_ENV
           python -c "import synapseclient; print(synapseclient.__file__)"
           python -c "import boto3; print(boto3.__file__)"
+          python -c 'import site; print(site.getsitepackages())'
 
 
