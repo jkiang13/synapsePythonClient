@@ -49,7 +49,9 @@ jobs:
         shell: bash
         run: |
           pip install --upgrade pip
-          SITE_PACKAGES_LOCATION=$(python3 -m site --user-site)
+          #SITE_PACKAGES_LOCATION=$(python3 -m site --user-site)
+          SITE_PACKAGES_LOCATION=$(python -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
+          echo $SITE_PACKAGES_LOCATION
           pip install --target=$SITE_PACKAGES_LOCATION ".[boto3,pandas,pysftp,tests]" && pip uninstall -y `python setup.py --name`
 
           # ensure that numpy c extensions are installed on windows
