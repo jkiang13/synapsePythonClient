@@ -48,6 +48,7 @@ jobs:
       - name: install-py-dependencies
         shell: bash
         run: |
+          pip install --upgrade pip
           SITE_PACKAGES_LOCATION=$(python3 -m site --user-site)
           pip install --target=$SITE_PACKAGES_LOCATION -e ".[boto3,pandas,pysftp,tests]"
 
