@@ -1,4 +1,3 @@
-
 # GitHub Action workflow for testing, building, and releasing the Synapse Python Client.
 
 # - all pushes, releases, and pull requests  are tested against unit tests, and additionally
@@ -46,26 +45,34 @@ jobs:
         with:
           python-version: ${{ matrix.python }}
 
+      - name: get-dependencies-location
+        shell: bash
+        run: |
+          SITE_PACKAGES_LOCATION=$(python -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
+          SITE_BIN_DIR=$(python3 -c "import os; import distutils.sysconfig; pre = distutils.sysconfig.get_config_var('prefix'); bindir = os.path.join(pre, 'bin'); print(bindir)")
+
+          echo "::set-output name=site_packages_loc::$SITE_PACKAGES_LOCATION"
+          echo "::set-output name=site_bin_dir::$SITE_BIN_DIR"
+
+          echo $SITE_PACKAGES_LOCATION
+          echo $SITE_BIN_DIR
+        id: get_dependencies
+
       - name: Cache py-dependencies
         id: cache-venv
         uses: actions/cache@v2
         env:
           cache-name: cache-py-dependencies
         with:
-          path: .venv
-          key: ${{ runner.os }}-${{ matrix.python }}-build-${{ env.cache-name }}-${{ hashFiles('setup.py') }}-v5
+          path: |
+            ${{ steps.get_dependencies.outputs.site_packages_loc }}
+            ${{ steps.get_dependencies.outputs.site_bin_dir }}
+          key: ${{ runner.os }}-${{ matrix.python }}-build-${{ env.cache-name }}-${{ hashFiles('setup.py') }}-v3
 
       - name: install-py-dependencies
         if: steps.cache-venv.outputs.cache-hit != 'true'
         shell: bash
         run: |
-          python -m venv .venv
-          if [ "${{startsWith(runner.os, 'Windows')}}" == "true" ]; then
-            .venv/Scripts/activate.bat
-          else
-            source .venv/bin/activate
-          fi
-
           pip install -e ".[boto3,pandas,pysftp,tests]"
           # ensure that numpy c extensions are installed on windows
           # https://stackoverflow.com/a/59346525
@@ -75,20 +82,15 @@ jobs:
             pip install setuptools
             pip install numpy
           fi
-
-      - name: activate-venv
-        if: steps.cache-venv.outputs.cache-hit == 'true'
-        shell: bash
-        run: |
-          if [ "${{startsWith(runner.os, 'Windows')}}" == "true" ]; then
-            .venv/Scripts/activate.bat
-          else
-            source .venv/bin/activate
-          fi
-
       - name: lint
         shell: bash
         run: |
+          if [ "${{startsWith(runner.os, 'Windows')}}" == "true" ]; then
+            where flake8
+          else
+            which flake8
+          fi
+
           flake8
       - name: run-unit-tests
         shell: bash
