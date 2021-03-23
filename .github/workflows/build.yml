@@ -76,14 +76,14 @@ jobs:
             pip install setuptools
             pip install numpy
           fi
-#      - name: lint
-#        shell: bash
-#        run: |
-#          flake8
-#      - name: run-unit-tests
-#        shell: bash
-#        run: |
-#          pytest -sv tests/unit
+      - name: lint
+        shell: bash
+        run: |
+          flake8
+      - name: run-unit-tests
+        shell: bash
+        run: |
+          pytest -sv tests/unit
 #      # run integration tests iff the decryption keys for the test configuration are available.
 #      # they will not be available in pull requests from forks.
 #      # run integration tests on the oldest and newest supported versions of python.
