@@ -50,8 +50,9 @@ jobs:
         shell: bash
         run: |
           python3 -m venv .venv
+          echo "here"
           if [ "${{startsWith(runner.os, 'Windows')}}" == "true" ]; then
-            .venv\Scripts\activate.bat
+            .venv/Scripts/activate.bat
           else
             source .venv/bin/activate
           fi
