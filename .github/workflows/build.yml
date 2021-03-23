@@ -49,7 +49,7 @@ jobs:
       - name: setup-venv
         shell: bash
         run: |
-          python3 -m venv .venv
+          python -m venv .venv
           echo "here"
           if [ "${{startsWith(runner.os, 'Windows')}}" == "true" ]; then
             .venv/Scripts/activate.bat
