@@ -46,17 +46,6 @@ jobs:
         with:
           python-version: ${{ matrix.python }}
 
-      - name: setup-venv
-        shell: bash
-        run: |
-          python -m venv .venv
-          echo "here"
-          if [ "${{startsWith(runner.os, 'Windows')}}" == "true" ]; then
-            .venv/Scripts/activate.bat
-          else
-            source .venv/bin/activate
-          fi
-
       - name: Cache py-dependencies
         id: cache-venv
         uses: actions/cache@v2
@@ -64,12 +53,19 @@ jobs:
           cache-name: cache-py-dependencies
         with:
           path: .venv
-          key: ${{ runner.os }}-${{ matrix.python }}-build-${{ env.cache-name }}-${{ hashFiles('setup.py') }}-v4
+          key: ${{ runner.os }}-${{ matrix.python }}-build-${{ env.cache-name }}-${{ hashFiles('setup.py') }}-v5
 
       - name: install-py-dependencies
         if: steps.cache-venv.outputs.cache-hit != 'true'
         shell: bash
         run: |
+          python -m venv .venv
+          if [ "${{startsWith(runner.os, 'Windows')}}" == "true" ]; then
+            .venv/Scripts/activate.bat
+          else
+            source .venv/bin/activate
+          fi
+
           pip install -e ".[boto3,pandas,pysftp,tests]"
           # ensure that numpy c extensions are installed on windows
           # https://stackoverflow.com/a/59346525
@@ -79,6 +75,17 @@ jobs:
             pip install setuptools
             pip install numpy
           fi
+
+      - name: activate-venv
+        if: steps.cache-venv.outputs.cache-hit == 'true'
+        shell: bash
+        run: |
+          if [ "${{startsWith(runner.os, 'Windows')}}" == "true" ]; then
+            .venv/Scripts/activate.bat
+          else
+            source .venv/bin/activate
+          fi
+
       - name: lint
         shell: bash
         run: |
