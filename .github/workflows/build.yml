@@ -34,7 +34,7 @@ jobs:
         os: [ubuntu-18.04]
 
         # if changing the below change the run-integration-tests versions and the check-deploy versions
-        python: [3.6]
+        python: [3.6, 3.7, 3.8, 3.9]
 
     runs-on: ${{ matrix.os }}
 
