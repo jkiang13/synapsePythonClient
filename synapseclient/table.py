@@ -551,6 +551,7 @@ def _csv_to_pandas_df(filepath,
                       escape_char=DEFAULT_ESCAPSE_CHAR,
                       contain_headers=True,
                       lines_to_skip=0,
+                      string_columns=None,
                       date_columns=None,
                       list_columns=None,
                       rowIdAndVersionInIndex=True):
@@ -572,6 +573,7 @@ def _csv_to_pandas_df(filepath,
     # "ValueError: Only length-1 line terminators supported"
     df = pd.read_csv(filepath,
                      sep=separator,
+                     converters={str_column: str for str_column in string_columns} if string_columns else None,
                      lineterminator=line_terminator if len(line_terminator) == 1 else None,
                      quotechar=quote_char,
                      escapechar=escape_char,
@@ -1923,15 +1925,19 @@ class CsvFileTable(TableAbstractBaseClass):
             # determine which columns are DATE columns so we can convert milisecond timestamps into datetime objects
             date_columns = []
             list_columns = []
+            string_columns = []
 
             if self.headers is not None:
-                if convert_to_datetime:
-                    for select_column in self.headers:
-                        if select_column.columnType == "DATE":
-                            date_columns.append(select_column.name)
                 for select_column in self.headers:
-                    if select_column.columnType in {'STRING_LIST', 'INTEGER_LIST', 'BOOLEAN_LIST'}:
+                    if select_column.columnType == 'STRING':
+                        # we want to identify string columns so that pandas doesn't try to
+                        # automatically parse strings in a string column to other data types
+                        string_columns.append(select_column.name)
+                    elif select_column.columnType in {'STRING_LIST', 'INTEGER_LIST', 'BOOLEAN_LIST'}:
                         list_columns.append(select_column.name)
+                    elif select_column.columnType == 'DATE' and convert_to_datetime:
+                        date_columns.append(select_column.name)
+
             return _csv_to_pandas_df(self.filepath,
                                      separator=self.separator,
                                      quote_char=quoteChar,
@@ -1940,7 +1946,9 @@ class CsvFileTable(TableAbstractBaseClass):
                                      lines_to_skip=self.linesToSkip,
                                      date_columns=date_columns,
                                      list_columns=list_columns,
+                                     string_columns=string_columns,
                                      rowIdAndVersionInIndex=rowIdAndVersionInIndex)
+
         except pd.parser.CParserError:
             return pd.DataFrame()
 
