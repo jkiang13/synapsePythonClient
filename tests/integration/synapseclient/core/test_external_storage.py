@@ -118,6 +118,7 @@ class ExernalStorageTest(unittest.TestCase):
         bucket_name, _ = get_aws_env()
         s3_client.get_object(Bucket=bucket_name, Key=file_handle['key'])
 
+    @unittest.skip('needs PutObjectAcl')
     def test_sts_external_storage_location(self):
         """Test creating and using an external STS storage location.
         A custom storage location is created with sts enabled,
